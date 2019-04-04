@@ -59,10 +59,21 @@
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+<!-- This contains the dependencies for mysql-connector -->
+<build_depend>cmake_modules</build_depend>
+<build_depend>libmysqlclient-dev</build_depend>
+
+<exec_depend>cmake_modules</exec_depend>
+<exec_depend>libmysqlclient-dev</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
-  <export>
     <!-- Other tools can request additional information be placed here -->
 
-  </export>
+<export>
+  <cpp lflags="-lmysqlclient"/>
+</export>
+
+
+
+
 </package>
