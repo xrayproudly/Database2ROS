@@ -7,7 +7,7 @@ project(Database2ROS)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake-modules)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR /usr/local/mysql/connector-c++-8.0)
+set(MYSQL_CPPCONN_DIR /usr/local/mysql/connector-c++-8.0)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(MySqlClient REQUIRED)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+ find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -126,13 +126,17 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${MYSQL_INCLUDE_DIRS}
-  ${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/include
   ${MYSQL_CPPCONN_DIR}/include
+  /usr/include/boost
+)
+
+find_library(PATH_TO_LIBMYSQLCPPCONN
+  NAMES libmysqlcppconn.so
+  PATHS ${MYSQL_CPPCONN_DIR}/lib64/debug
 )
 
 link_directories(
-  ${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/lib64
-  ${MYSQL_CPPCONN_DIR}
+  ${MYSQL_CPPCONN_DIR}/lib64
 )
 
 add_definitions(${MYSQL_DEFINITIONS})
@@ -166,7 +170,8 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   ${MYSQL_LIBRARIES}
-  mysqlcppconn
+  ${PATH_TO_LIBMYSQLCPPCONN}
+  # ${MYSQL_CPPCONN_DIR}/lib64
 )
 
 #############
