@@ -4,8 +4,13 @@
 #include <jdbc/cppconn/statement.h>
 
 #include <unistd.h>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 
 int main(int argc, char **argv) {
+
+    int inspNo = 0;
 
     try{
         sql::Driver *driver;
@@ -18,14 +23,21 @@ int main(int argc, char **argv) {
         con->setSchema("psa_pintura");
 
         stmt = con->createStatement();
-        res = stmt->executeQuery("SELECT x, y FROM defects");
+        res = stmt->executeQuery("SELECT id_inspection, x, y FROM defects ORDER BY id_inspection ASC");
         while (res->next()) {
-            std::cout << "[X]: ";
-            std::cout << res->getString(1);
-            std::cout << "[Y]: ";
-            std::cout << res->getString(2);
-            std::cout << std::endl; 
+            if(res->getInt(1) != inspNo) {
+                std::cout << "\n[ID]: ";
+                std::cout << res->getInt(1);
+            }
+            std::cout << "\n   [X]: ";
+            std::cout << std::setw(5) << res->getInt(2);
+            std::cout << " [Y]: ";
+            std::cout << std::setw(5) << res->getInt(3);
+
+            inspNo = res->getInt(1);
         }
+        std::cout << std::endl;
+
         delete res;
         delete stmt;
         delete con;
@@ -33,6 +45,5 @@ int main(int argc, char **argv) {
     catch(sql::SQLException &err){
         std::cout << "ERROR: " << err.what() << std::endl;
     }
-    pause();
     return 0;
 }
